@@ -27,6 +27,7 @@ function App() {
   const [server, setServer] = useState(localStorage.getItem('server'))
   const [ui, setUI] = useState(localStorage.getItem('ui'))
   const [ros, setRos] = useState(localStorage.getItem('ros'))
+  const [pose, setPose] = useState(localStorage.getItem('ros'))
   const [dest, setDestination] = useState('')
   const [cartState, setCartState] = useState('')
   const createPanel = (name, port, onRestart, onStop) => {
@@ -68,6 +69,7 @@ function App() {
             colorScheme="red"
             variant="outline"
             size="sm"
+            onClick={onStop}
           >
             Stop
           </Button>
@@ -126,6 +128,17 @@ function App() {
                 }}
               />
             </InputGroup>
+            <InputGroup size="sm" mt={2}>
+              <InputLeftAddon children="pose-server" w="100px" />
+              <Input
+                placeholder="path to pose-tracking server"
+                value={ros}
+                onChange={(e) => {
+                  localStorage.setItem('pose', e.target.value)
+                  setPose(e.target.value)
+                }}
+              />
+            </InputGroup>
           </Collapse>
           <Divider my={3} />
         </Flex>
@@ -135,6 +148,11 @@ function App() {
             colorScheme="blue"
             variant="outline"
             size="sm"
+            onClick={() => {
+              window.ipcRenderer.send('start-all-servers', {
+                path: ros,
+              }) // send this to electron
+            }}
           >
             Start all servers
           </Button>
@@ -155,12 +173,25 @@ function App() {
           8020,
           () => {
             console.log('hey')
-            window.ipcRenderer.send('local-server', server)
+            window.ipcRenderer.send('local-server-restart', {
+              path: server,
+              port: 8020,
+            }) // send this to electron
+          },
+          () => {
+            console.log('clicked stop')
+            window.ipcRenderer.send('local-server-stop', null)
+          }
+        )}
+        {createPanel('UI Server', 3000, null, null)}
+        {createPanel(
+          'Pose Tracking',
+          3001,
+          () => {
+            window.ipcRenderer.send('pose-server-start', server) // send this to electron
           },
           null
         )}
-        {createPanel('UI Server', 3000, null, null)}
-        {createPanel('Pose Tracking', 3001, null, null)}
         <Flex>
           <Text color="gray.400">Modify State</Text>
           <Spacer />
