@@ -22,7 +22,7 @@ function createWindow() {
   })
   mainWindow.setMenuBarVisibility(false)
   // and load the index.html of the app.
-  mainWindow.loadURL('http://localhost:3000')
+  mainWindow.loadURL('http://localhost:3002')
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
