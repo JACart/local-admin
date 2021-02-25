@@ -132,7 +132,7 @@ function App() {
               <InputLeftAddon children="pose-server" w="100px" />
               <Input
                 placeholder="path to pose-tracking server"
-                value={ros}
+                value={pose}
                 onChange={(e) => {
                   localStorage.setItem('pose', e.target.value)
                   setPose(e.target.value)
@@ -172,25 +172,31 @@ function App() {
           'Local Server',
           8020,
           () => {
-            console.log('hey')
+            console.log('local-server-restart')
             window.ipcRenderer.send('local-server-restart', {
               path: server,
               port: 8020,
             }) // send this to electron
           },
           () => {
-            console.log('clicked stop')
-            window.ipcRenderer.send('local-server-stop', null)
+            console.log('local server clicked stop')
+            window.ipcRenderer.send('local-server-stop', server)
           }
         )}
-        {createPanel('UI Server', 3000, null, null)}
+        {createPanel('UI Server', 3000, () => {
+            window.ipcRenderer.send('ui-server-restart', {path: ui, port: 3000}) // send this to electron
+          }, () => {
+            window.ipcRenderer.send('ui-server-stop', ui) // send this to electron
+          })}
         {createPanel(
           'Pose Tracking',
           3001,
           () => {
-            window.ipcRenderer.send('pose-server-start', server) // send this to electron
+            window.ipcRenderer.send('pose-server-restart', {path: pose, port: 3001}) // send this to electron
           },
-          null
+          () => {
+            window.ipcRenderer.send('pose-server-stop', pose) // send this to electron
+          },
         )}
         <Flex>
           <Text color="gray.400">Modify State</Text>

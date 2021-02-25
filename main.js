@@ -47,9 +47,28 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-ipcMain.on('local-server', (ev, arg) => {
+ipcMain.on('local-server-restart', (ev, arg) => {
   console.log(arg)
-
+  //find and replace -
+})
+ipcMain.on('local-server-stop', (ev, arg) => {
+  console.log(arg)
+  //find and replace -
+})
+ipcMain.on('ui-server-restart', (ev, arg) => {
+  console.log(arg)
+  //find and replace -
+})
+ipcMain.on('ui-server-stop', (ev, arg) => {
+  console.log(arg)
+  //find and replace -
+})
+ipcMain.on('pose-server-restart', (ev, arg) => {
+  console.log(arg)
+  //find and replace -
+})
+ipcMain.on('pose-server-stop', (ev, arg) => {
+  console.log(arg)
   //find and replace -
 })
 
