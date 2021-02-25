@@ -175,7 +175,7 @@ function App() {
             console.log('local-server-restart')
             window.ipcRenderer.send('local-server-restart', {
               path: server,
-              port: 8020,
+              port: 8020
             }) // send this to electron
           },
           () => {

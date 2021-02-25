@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
+var exec = require('child_process').exec
 // const exec = require('child_process').exec
 
 function createWindow() {
@@ -47,29 +48,48 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
+var child 
+ipcMain.on('start-all-servers', (ev, arg) => {
+  child = exec(arg.path + '/run.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+})
+
 ipcMain.on('local-server-restart', (ev, arg) => {
   console.log(arg)
-  //find and replace -
+  child = exec('./scripts/local-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
 })
 ipcMain.on('local-server-stop', (ev, arg) => {
   console.log(arg)
-  //find and replace -
+  child = exec('./scripts/local-server-stop.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
 })
 ipcMain.on('ui-server-restart', (ev, arg) => {
   console.log(arg)
-  //find and replace -
+  child = exec('./scripts/ui-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
 })
 ipcMain.on('ui-server-stop', (ev, arg) => {
   console.log(arg)
-  //find and replace -
+  child = exec('./scripts/ui-server-stop.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
 })
 ipcMain.on('pose-server-restart', (ev, arg) => {
   console.log(arg)
-  //find and replace -
+  child = exec('./scripts/pose-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
 })
 ipcMain.on('pose-server-stop', (ev, arg) => {
   console.log(arg)
-  //find and replace -
+  child = exec('./scripts/pose-server-stop.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
 })
 
 // In this file you can include the rest of your app's specific main process
