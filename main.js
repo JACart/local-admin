@@ -53,6 +53,15 @@ ipcMain.on('start-all-servers', (ev, arg) => {
   child = exec(arg.path + '/run.sh', function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
   })
+  child = exec('./scripts/local-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+  child = exec('./scripts/ui-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+  child = exec('./scripts/pose-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
 })
 
 ipcMain.on('local-server-restart', (ev, arg) => {
