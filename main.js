@@ -90,7 +90,7 @@ function start_local_server (arg) {
 }
 function run_sh_start(arg) {
   console.log('Starting run.sh')
-  child = exec('./scripts/ros-start.sh \'' + arg.path, function (error, stdout, stderr) {
+  child = exec('./scripts/ros-start.sh \'' + arg.path + '\'', function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
     console.log('Error: ' + error)
     console.log('Stderr: ' + stderr)
