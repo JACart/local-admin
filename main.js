@@ -84,24 +84,32 @@ function start_local_server (arg) {
   console.log('Starting Local Server.')
   child = exec('./scripts/local-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
+    console.log('Error: ' + error)
+    console.log('Stderr: ' + stderr)
   })
 }
 function run_sh_start(arg) {
   console.log('Starting run.sh')
   child = exec('sudo ' + arg.path + '/run.sh', function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
+    console.log('Error: ' + error)
+    console.log('Stderr: ' + stderr)
   })
 }
 function start_ui_server(arg) {
   console.log('Starting UI Server.')
   child = exec('./scripts/ui-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
+    console.log('Error: ' + error)
+    console.log('Stderr: ' + stderr)
   })
 }
 function start_pose_server(arg) {
   console.log('Starting Pose Server.')
   child = exec('./scripts/pose-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
+    console.log('Error: ' + error)
+    console.log('Stderr: ' + stderr)
   })
 }
 function stop_local_server(arg) {
