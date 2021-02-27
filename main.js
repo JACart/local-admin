@@ -88,7 +88,7 @@ function start_local_server (arg) {
 }
 function run_sh_start(arg) {
   console.log('Starting run.sh')
-  child = exec(arg.path + '/run.sh', function (error, stdout, stderr) {
+  child = exec('sudo ' + arg.path + '/run.sh', function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
   })
 }
