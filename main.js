@@ -50,56 +50,75 @@ app.on('window-all-closed', function () {
 
 var child 
 ipcMain.on('start-all-servers', (ev, arg) => {
-  child = exec(arg.path + '/run.sh', function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
-  child = exec('./scripts/local-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
-  child = exec('./scripts/ui-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
-  child = exec('./scripts/pose-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
+  console.log(arg)
+  run_sh_start({path: arg.ros_local})
+  start_local_server(arg.local_path)
+  start_ui_server(arg.ui_path)
+  start_pose_server(arg.pose_path)
 })
 
 ipcMain.on('local-server-restart', (ev, arg) => {
-  console.log(arg)
-  child = exec('./scripts/local-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
+  start_local_server(arg)
 })
 ipcMain.on('local-server-stop', (ev, arg) => {
-  console.log(arg)
-  child = exec('./scripts/local-server-stop.sh', function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
+  stop_local_server(arg)
 })
 ipcMain.on('ui-server-restart', (ev, arg) => {
-  console.log(arg)
-  child = exec('./scripts/ui-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
+  start_ui_server(arg)
 })
 ipcMain.on('ui-server-stop', (ev, arg) => {
-  console.log(arg)
-  child = exec('./scripts/ui-server-stop.sh', function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
+  stop_ui_server(arg)
 })
 ipcMain.on('pose-server-restart', (ev, arg) => {
-  console.log(arg)
-  child = exec('./scripts/pose-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
+  start_pose_server(arg)
 })
 ipcMain.on('pose-server-stop', (ev, arg) => {
-  console.log(arg)
-  child = exec('./scripts/pose-server-stop.sh', function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
+  stop_pose_server(arg)
+  
 })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+function start_local_server (arg) {
+  console.log('Starting Local Server.')
+  child = exec('./scripts/local-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+}
+function run_sh_start(arg) {
+  console.log('Starting run.sh')
+  child = exec(arg.path + '/run.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+}
+function start_ui_server(arg) {
+  console.log('Starting UI Server.')
+  child = exec('./scripts/ui-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+}
+function start_pose_server(arg) {
+  console.log('Starting Pose Server.')
+  child = exec('./scripts/pose-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+}
+function stop_local_server(arg) {
+  console.log('Stopping Local Server.')
+  child = exec('./scripts/local-server-stop.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+}
+function stop_ui_server(arg) {
+  console.log('Stopping UI Server.')
+  child = exec('./scripts/ui-server-stop.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+}
+function stop_pose_server(arg) {
+  console.log('Stopping Pose Server')
+  child = exec('./scripts/pose-server-stop.sh', function (error, stdout, stderr) {
+    console.log('Output: ' + stdout)
+  })
+}

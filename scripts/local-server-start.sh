@@ -9,6 +9,6 @@ if ! screen -list | grep "local-server"; then
     screen -dmS local-server
 fi
 
-screen -S local-server -p 0 -X stuff "./npm-start.sh $1"
+screen -S local-server -p 0 -X stuff "./scripts/npm-start.sh $1"
 screen -S local-server -p 0 -X stuff '\n'
 echo "Started!"

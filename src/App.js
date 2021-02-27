@@ -27,7 +27,7 @@ function App() {
   const [server, setServer] = useState(localStorage.getItem('server'))
   const [ui, setUI] = useState(localStorage.getItem('ui'))
   const [ros, setRos] = useState(localStorage.getItem('ros'))
-  const [pose, setPose] = useState(localStorage.getItem('ros'))
+  const [pose, setPose] = useState(localStorage.getItem('pose'))
   const [dest, setDestination] = useState('')
   const [cartState, setCartState] = useState('')
   const createPanel = (name, port, onRestart, onStop) => {
@@ -149,8 +149,9 @@ function App() {
             variant="outline"
             size="sm"
             onClick={() => {
-              window.ipcRenderer.send('start-all-servers', {
-                path: ros,
+              window.ipcRenderer.send('start-all-servers', 
+              {
+                ros_path: ros, ui_path: {path: ui, port: 3000}, pose_path: {path: pose, port: 3001}, local_path: {path: server, port: 8020}
               }) // send this to electron
             }}
           >
