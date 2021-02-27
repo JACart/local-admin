@@ -51,7 +51,7 @@ app.on('window-all-closed', function () {
 var child 
 ipcMain.on('start-all-servers', (ev, arg) => {
   console.log(arg)
-  run_sh_start({path: arg.ros_local})
+  run_sh_start({path: arg.ros_path})
   start_local_server(arg.local_path)
   start_ui_server(arg.ui_path)
   start_pose_server(arg.pose_path)
@@ -90,7 +90,7 @@ function start_local_server (arg) {
 }
 function run_sh_start(arg) {
   console.log('Starting run.sh')
-  child = exec('sudo ' + arg.path + '/run.sh', function (error, stdout, stderr) {
+  child = exec('./scripts/ros-start.sh \'' + arg.path, function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
     console.log('Error: ' + error)
     console.log('Stderr: ' + stderr)
