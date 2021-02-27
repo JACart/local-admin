@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd $1
-sudo ./run.sh
+gnome-terminal --tab -e " sh -c 'cd $1; ./run.sh; exec bash;'"
