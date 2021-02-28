@@ -11,6 +11,6 @@ fi
 
 screen -S local-server -p 0 -X stuff "unset npm_config_prefix\n"
 screen -S local-server -p 0 -X stuff "source ~/.bashrc\n"
-screen -S local-server -p 0 -X stuff "./scripts/npm-start.sh $1"
+screen -S local-server -p 0 -X stuff "./scripts/npm-start.sh $1 $2"
 screen -S local-server -p 0 -X stuff '\n'
 echo "Started!"

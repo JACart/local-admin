@@ -28,6 +28,9 @@ function App() {
   const [ui, setUI] = useState(localStorage.getItem('ui'))
   const [ros, setRos] = useState(localStorage.getItem('ros'))
   const [pose, setPose] = useState(localStorage.getItem('pose'))
+  const [localPort, setLocalPort] = useState(localStorage.getItem('localPort'))
+  const [uiPort, setUIPort] = useState(localStorage.getItem('uiPort'))
+  const [posePort, setPosePort] = useState(localStorage.getItem('posePort'))
   const [dest, setDestination] = useState('')
   const [cartState, setCartState] = useState('')
   const createPanel = (name, port, onRestart, onStop) => {
@@ -47,10 +50,6 @@ function App() {
             px={2}
             py={1}
           >
-            <Text as="span" color="gray.400">
-              {' '}
-              port
-            </Text>{' '}
             {port}
           </Text>
 
@@ -151,7 +150,7 @@ function App() {
             onClick={() => {
               window.ipcRenderer.send('start-all-servers', 
               {
-                ros_path: ros, ui_path: {path: ui, port: 3000}, pose_path: {path: pose, port: 3001}, local_path: {path: server, port: 8020}
+                ros_path: ros, ui_path: {path: ui, port: uiPort}, pose_path: {path: pose, port: posePort}, local_path: {path: server, port: localPort}
               }) // send this to electron
             }}
           >
@@ -171,12 +170,19 @@ function App() {
         <Divider my={3} />
         {createPanel(
           'Local Server',
-          8020,
+          (<InputGroup size="xs" w="90px" h="=4px"><InputLeftAddon children="port" bg="gray.900"  border="gray.900" w="40px" /><Input
+            placeholder="port"
+            value={localPort}
+            onChange={(e) => {
+              localStorage.setItem('localPort', e.target.value)
+              setLocalPort(e.target.value)
+            }}
+          /></InputGroup>),
           () => {
             console.log('local-server-restart')
             window.ipcRenderer.send('local-server-restart', {
               path: server,
-              port: 8020
+              port: localPort
             }) // send this to electron
           },
           () => {
@@ -184,16 +190,30 @@ function App() {
             window.ipcRenderer.send('local-server-stop', server)
           }
         )}
-        {createPanel('UI Server', 3000, () => {
-            window.ipcRenderer.send('ui-server-restart', {path: ui, port: 3000}) // send this to electron
+        {createPanel('UI Server', (<InputGroup size="xs" w="90px" h="=4px"><InputLeftAddon children="port" bg="gray.900"  border="gray.900" w="40px" /><Input
+            placeholder="port"
+            value={uiPort}
+            onChange={(e) => {
+              localStorage.setItem('uiPort', e.target.value)
+              setUIPort(e.target.value)
+            }}
+          /></InputGroup>), () => {
+            window.ipcRenderer.send('ui-server-restart', {path: ui, port: uiPort}) // send this to electron
           }, () => {
             window.ipcRenderer.send('ui-server-stop', ui) // send this to electron
           })}
         {createPanel(
           'Pose Tracking',
-          3001,
+          (<InputGroup size="xs" w="90px" h="=4px"><InputLeftAddon children="port" bg="gray.900"  border="gray.900" w="40px" /><Input
+            placeholder="port"
+            value={posePort}
+            onChange={(e) => {
+              localStorage.setItem('posePort', e.target.value)
+              setPosePort(e.target.value)
+            }}
+          /></InputGroup>),
           () => {
-            window.ipcRenderer.send('pose-server-restart', {path: pose, port: 3001}) // send this to electron
+            window.ipcRenderer.send('pose-server-restart', {path: pose, port: posePort}) // send this to electron
           },
           () => {
             window.ipcRenderer.send('pose-server-stop', pose) // send this to electron

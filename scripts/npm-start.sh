@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd $1
-npm start
+PORT=$2 npm start
