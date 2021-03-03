@@ -246,7 +246,9 @@ function App() {
             <MenuList minW="120px">
               {Object.keys(destination).map((x) => {
                 return (
-                  <MenuItem key={x} onClick={() => setDestination(x)}>
+                  <MenuItem key={x} onClick={() => 
+                    setDestination(x)}
+                  >
                     {x}
                   </MenuItem>
                 )
@@ -295,7 +297,8 @@ function App() {
             <MenuList minW="120px">
               {cartStates.map((x) => {
                 return (
-                  <MenuItem key={x} onClick={() => setCartState(x)}>
+                  <MenuItem key={x} onClick={() =>
+                    setCartState(x) }>
                     {x}
                   </MenuItem>
                 )
@@ -330,7 +333,10 @@ function App() {
             colorScheme="orange"
             variant="outline"
             size="sm"
-            onClick={onToggle}
+            onClick={
+            (e) => {
+              window.ipcRenderer.send('save-and-restart', {destination: dest, state: cartState})
+            }}
           >
             Save and restart
           </Button>

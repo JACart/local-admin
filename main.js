@@ -1,8 +1,10 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
+const fs = require('fs')
 var exec = require('child_process').exec
 // const exec = require('child_process').exec
+let cartState
 
 function createWindow() {
   // Create the browser window.
@@ -129,4 +131,37 @@ function stop_pose_server(arg) {
   child = exec('./scripts/pose-server-stop.sh', function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
   })
+}
+
+function readFile() {
+  cartState = JSON.parse(fs.readFileSync('../local-server/cart.json', 'utf-8'))
+}
+
+ipcMain.on('save-and-restart', (ev, arg) => {
+    readFile()
+    cartState.destination = arg.destination
+    cartState.state = arg.state
+    console.log('Set Destination to ' + arg.destination)
+    console.log('Set State to ' + arg.state)
+    writeFile()
+    child = exec('./scripts/restart-server.sh', function (error, stdout, stderr) {
+      console.log('Server Restarted')
+    })
+})
+
+function setState(state) {
+    readFile()
+    cartState.state = state
+    writeFile()
+}
+
+ipcMain.on('setState', (ev, arg) => {
+    readFile()
+    cartState.state = arg
+    console.log('Set State to ' + arg)
+    writeFile()
+})
+
+function writeFile() {
+  fs.writeFileSync('../local-server/cart.json', JSON.stringify(cartState))
 }
