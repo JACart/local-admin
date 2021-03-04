@@ -133,35 +133,22 @@ function stop_pose_server(arg) {
   })
 }
 
-function readFile() {
-  cartState = JSON.parse(fs.readFileSync('../local-server/cart.json', 'utf-8'))
+function readFile(path) {
+  cartState = JSON.parse(fs.readFileSync(path + '/cart.json', 'utf-8'))
 }
 
 ipcMain.on('save-and-restart', (ev, arg) => {
-    readFile()
+    readFile(arg.path)
     cartState.destination = arg.destination
     cartState.state = arg.state
     console.log('Set Destination to ' + arg.destination)
     console.log('Set State to ' + arg.state)
-    writeFile()
+    writeFile(arg.path)
     child = exec('./scripts/restart-server.sh', function (error, stdout, stderr) {
       console.log('Server Restarted')
     })
 })
 
-function setState(state) {
-    readFile()
-    cartState.state = state
-    writeFile()
-}
-
-ipcMain.on('setState', (ev, arg) => {
-    readFile()
-    cartState.state = arg
-    console.log('Set State to ' + arg)
-    writeFile()
-})
-
-function writeFile() {
-  fs.writeFileSync('../local-server/cart.json', JSON.stringify(cartState))
+function writeFile(path) {
+  fs.writeFileSync(path + '/cart.json', JSON.stringify(cartState))
 }

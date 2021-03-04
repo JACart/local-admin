@@ -335,7 +335,7 @@ function App() {
             size="sm"
             onClick={
             (e) => {
-              window.ipcRenderer.send('save-and-restart', {destination: dest, state: cartState})
+              window.ipcRenderer.send('save-and-restart', {destination: dest, state: cartState, path: server})
             }}
           >
             Save and restart
