@@ -341,6 +341,20 @@ function App() {
             Save and restart
           </Button>
         </Flex>
+        <Flex mt={3} justify="center">
+          <Button
+            leftIcon={<AiFillSetting />}
+            colorScheme="orange"
+            variant="outline"
+            size="sm"
+            onClick={
+            (e) => {
+              window.ipcRenderer.send('save-and-restart', {destination: '', state: 'summon-finish', path: server})
+            }}
+          >
+            DEMO: Reset UI
+          </Button>
+        </Flex>
       </Flex>
     </Box>
   )

@@ -1,6 +1,10 @@
 {
   "name": "jc-mon",
   "version": "0.1.0",
+  "main": "main.js",
+  "bin": "bin.js",
+  "author": "JMU Autonomous Vehicles Group",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^1.0.5",
