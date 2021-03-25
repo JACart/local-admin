@@ -14,12 +14,15 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {AiFillPlayCircle, AiFillSetting} from 'react-icons/ai'
 import {FaStopCircle} from 'react-icons/fa'
 import {ImLocation} from 'react-icons/im'
 import {IoMdRefresh} from 'react-icons/io'
 import {cartStates, destination} from './destinations'
+import fs from 'fs'
+
+
 
 function App() {
   const {isOpen, onToggle} = useDisclosure()
@@ -33,6 +36,27 @@ function App() {
   const [posePort, setPosePort] = useState(localStorage.getItem('posePort'))
   const [dest, setDestination] = useState('')
   const [cartState, setCartState] = useState('')
+  const [isEnabled, setIsEnabled] = useState(true);
+
+  useEffect(()=>{
+    if(window.ipcRenderer){
+      window.ipcRenderer.on('pullover',(ev,arg)=>{
+        console.log(arg);
+      setIsEnabled(arg);
+
+    })
+  }
+  },[])
+
+  useEffect(()=>{
+    console.log(isEnabled + '   enabled usefx');
+  },[isEnabled])
+
+
+  const setSwitchState = (state) => {
+    console.log('setting switch state to ' + state)
+  }
+ 
   const createPanel = (name, port, onRestart, onStop) => {
     return (
       <Flex direction="column" w="100%">
@@ -325,7 +349,15 @@ function App() {
           <Text fontSize="sm" color="gray.400">
             Pullover
           </Text>
-          <Switch id="email-alerts" ml={2} />
+          <Switch id="pullover" ml={2} 
+              onChange={e=>{
+                console.log(e.target.checked + '  switch val');
+                setIsEnabled(e.target.checked)
+                window.ipcRenderer.send('pullover', e.target.checked)
+              }}
+
+              isChecked={isEnabled}
+          />
         </Flex>
         <Flex mt={3} justify="center">
           <Button
@@ -358,6 +390,7 @@ function App() {
       </Flex>
     </Box>
   )
+  
 }
 
 export default App

@@ -22,18 +22,18 @@
     "react-dom": "^17.0.1",
     "react-icons": "^4.2.0",
     "react-scripts": "4.0.2",
+    "socket.io-client": "^2.3.0",
     "typescript": "^4.1.3",
     "wait-on": "^5.2.1",
     "web-vitals": "^1.0.1"
   },
-  "main": "main.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-react": "concurrently \"SET BROWSER=none&&yarn start\" \"wait-on http://localhost:3002 && electron .\"",
-    "linux-start": "concurrently \"npm start \" \"wait-on http://localhost:3002 && electron .\"" 
+    "linux-start": "concurrently \"npm start \" \"wait-on http://localhost:3002 && electron .\""
   },
   "eslintConfig": {
     "extends": [

@@ -2,13 +2,16 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const fs = require('fs')
+const io = require('socket.io-client')
+let socket
 var exec = require('child_process').exec
+const { FaBullseye } = require('react-icons/fa')
 // const exec = require('child_process').exec
 let cartState
-
+let localServerStarted = false
 function createWindow() {
   // Create the browser window.
-  var mainWindow = new BrowserWindow({
+ var mainWindow = new BrowserWindow({
     title: 'JaCart Monitor',
     width: 600,
     height: 565,
@@ -26,6 +29,14 @@ function createWindow() {
   // and load the index.html of the app.
   mainWindow.loadURL('http://localhost:3002')
 
+
+  fs.watchFile('../local-server/cart.json', (curr, prev) => {
+    console.log("WATCH CHANGE");
+    readFile('../local-server')
+    console.log('new state: ' + cartState.pullover)
+    mainWindow.webContents.send('pullover',cartState.pullover);
+  });
+  
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
@@ -75,10 +86,12 @@ ipcMain.on('pose-server-restart', (ev, arg) => {
   start_pose_server(arg)
 })
 ipcMain.on('pose-server-stop', (ev, arg) => {
-  stop_pose_server(arg)
-  
+  stop_pose_server(arg)  
 })
-
+ipcMain.on('pullover', (ev, arg) => {
+  console.log('trigger pullover: ' + arg)
+  pullover(arg)
+})
 
 
 // In this file you can include the rest of your app's specific main process
@@ -91,6 +104,8 @@ function start_local_server (arg) {
     console.log('Error: ' + error)
     console.log('Stderr: ' + stderr)
   })
+  localServerStarted = true
+  socket = io('http://localhost:8021/ui')
 }
 function run_sh_start(arg) {
   console.log('Starting run.sh')
@@ -136,6 +151,7 @@ function stop_pose_server(arg) {
 }
 
 function readFile(path) {
+  console.log('reading from: ' + path)
   cartState = JSON.parse(fs.readFileSync(path + '/cart.json', 'utf-8'))
 }
 
@@ -151,6 +167,14 @@ ipcMain.on('save-and-restart', (ev, arg) => {
     })
 })
 
+function pullover(state) {
+  console.log('pullover socket')
+  if (localServerStarted) {
+    socket.emit('pullover', state)
+  } 
+}
+
 function writeFile(path) {
   fs.writeFileSync(path + '/cart.json', JSON.stringify(cartState))
 }
+
