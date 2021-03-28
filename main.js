@@ -34,7 +34,7 @@ function createWindow() {
     console.log("WATCH CHANGE");
     readFile('../local-server')
     console.log('new state: ' + cartState.pullover)
-    mainWindow.webContents.send('pullover',cartState.pullover);
+    mainWindow.webContents.send('state-change', cartState);
   });
   
   // Open the DevTools.
