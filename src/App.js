@@ -36,13 +36,17 @@ function App() {
   const [posePort, setPosePort] = useState(localStorage.getItem('posePort'))
   const [dest, setDestination] = useState('')
   const [cartState, setCartState] = useState('')
-  const [isEnabled, setIsEnabled] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [destButton, setDestButton] = useState('Destination')
+  const [stateButton, setStateButton] = useState('Cart State')
 
   useEffect(()=>{
     if(window.ipcRenderer){
-      window.ipcRenderer.on('pullover',(ev,arg)=>{
+      window.ipcRenderer.on('state-change',(ev,arg)=>{
         console.log(arg);
-      setIsEnabled(arg);
+      setIsEnabled(arg.pullover);
+      setDestination(arg.destination);
+      setCartState(arg.state);
 
     })
   }
@@ -264,21 +268,38 @@ function App() {
               variant="outline"
               leftIcon={<ImLocation />}
               rightIcon={<ChevronDownIcon />}
+              
             >
-              Destination
+              {destButton}
             </MenuButton>
+          <Button
+            leftIcon={<AiFillSetting />}
+            colorScheme="orange"
+            variant="outline"
+            size="sm"
+            onClick={
+            (e) => {
+              window.ipcRenderer.send('save-dest', {destination: destButton, path: server})
+              setDestButton('Destination')
+            }}
+          >
+            Save Dest
+          </Button>
             <MenuList minW="120px">
               {Object.keys(destination).map((x) => {
                 return (
-                  <MenuItem key={x} onClick={() => 
-                    setDestination(x)}
+                  <MenuItem key={x} onClick={() => {
+                    setDestButton(x)
+                  }}
                   >
                     {x}
                   </MenuItem>
                 )
               })}
             </MenuList>
+            
           </Menu>
+          
           <Spacer />
           {dest !== '' && (
             <>
@@ -304,6 +325,7 @@ function App() {
             </>
           )}
         </Flex>
+        
 
         <Flex mt={2} align="center">
           <Menu>
@@ -316,13 +338,27 @@ function App() {
               rightIcon={<ChevronDownIcon />}
               pr="21px"
             >
-              Cart State
+              {stateButton}
             </MenuButton>
+            <Button
+            leftIcon={<AiFillSetting />}
+            colorScheme="orange"
+            variant="outline"
+            size="sm"
+            onClick={
+            (e) => {
+              window.ipcRenderer.send('save-state', {state: stateButton, path: server})
+              setStateButton('Cart State')
+            }}
+          >
+            Save State
+          </Button>
             <MenuList minW="120px">
               {cartStates.map((x) => {
                 return (
-                  <MenuItem key={x} onClick={() =>
-                    setCartState(x) }>
+                  <MenuItem key={x} onClick={() => {
+                    setStateButton(x)
+                    }}>
                     {x}
                   </MenuItem>
                 )
@@ -367,10 +403,10 @@ function App() {
             size="sm"
             onClick={
             (e) => {
-              window.ipcRenderer.send('save-and-restart', {destination: dest, state: cartState, path: server})
+              window.ipcRenderer.send('restart')
             }}
           >
-            Save and restart
+            Restart UI
           </Button>
         </Flex>
         <Flex mt={3} justify="center">
