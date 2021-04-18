@@ -1,3 +1,16 @@
+# Deploying and using local-admin interface
+
+Clone Repository into catkin_ws/src directory
+Navigate into the local-admin directory
+Run the command npm -i.
+Run the command 'npm run linux-start'.  The GUI should appear.
+At the top, click the "Config" button.  Enter in the paths to the other resources.  These can be relative or absolute.
+Then enter in the ports that each server should use.
+Click "Start All Servers".  Another terminal tab should now appear. Enter in the sudo password to launch ros.
+Wait for ros to start up, then click the "Reload UI" button.  The page should now appear in the web browser ready to navigate.
+
+*Note, if you kill ROS, please use the ./run.sh file to re-launch it.  You will need to reload the UI again using the 'Reload UI' button once ROS is back up.*
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
