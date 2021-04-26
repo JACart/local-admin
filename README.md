@@ -4,7 +4,7 @@ Clone Repository into catkin_ws/src directory
 
 Navigate into the local-admin directory
 
-Run the command npm -i.
+Run the command npm i.
 
 Run the command 'npm run linux-start'.  The GUI should appear.
 
