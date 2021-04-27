@@ -22,6 +22,8 @@ Wait for ros to start up, then click the "Reload UI" button.  The page should no
 
 # Getting Started with Create React App
 
+# Install Node 14.16.0 using nvm!
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
