@@ -30,13 +30,13 @@ function App() {
   const [server, setServer] = useState(localStorage.getItem('server'))
   const [ui, setUI] = useState(localStorage.getItem('ui'))
   const [ros, setRos] = useState(localStorage.getItem('ros'))
-  const [pose, setPose] = useState(localStorage.getItem('pose'))
+  const [sudoPass, setSudoPass] = useState(localStorage.getItem('sudoPass'))
   const [localPort, setLocalPort] = useState(localStorage.getItem('localPort'))
   const [uiPort, setUIPort] = useState(localStorage.getItem('uiPort'))
-  const [posePort, setPosePort] = useState(localStorage.getItem('posePort'))
   const [dest, setDestination] = useState('')
   const [cartState, setCartState] = useState('')
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isPoseEnabled, setIsPoseEnabled] = useState(true);
   const [destButton, setDestButton] = useState('Destination')
   const [stateButton, setStateButton] = useState('Cart State')
 
@@ -51,15 +51,6 @@ function App() {
     })
   }
   },[])
-
-  useEffect(()=>{
-    console.log(isEnabled + '   enabled usefx');
-  },[isEnabled])
-
-
-  const setSwitchState = (state) => {
-    console.log('setting switch state to ' + state)
-  }
  
   const createPanel = (name, port, onRestart, onStop) => {
     return (
@@ -155,17 +146,6 @@ function App() {
                 }}
               />
             </InputGroup>
-            <InputGroup size="sm" mt={2}>
-              <InputLeftAddon children="pose-server" w="100px" />
-              <Input
-                placeholder="path to pose-tracking server"
-                value={pose}
-                onChange={(e) => {
-                  localStorage.setItem('pose', e.target.value)
-                  setPose(e.target.value)
-                }}
-              />
-            </InputGroup>
           </Collapse>
           <Divider my={3} />
         </Flex>
@@ -178,7 +158,7 @@ function App() {
             onClick={() => {
               window.ipcRenderer.send('start-all-servers', 
               {
-                ros_path: ros, ui_path: {path: ui, port: uiPort}, pose_path: {path: pose, port: posePort}, local_path: {path: server, port: localPort}
+                ros: {path: ros, param: isPoseEnabled}, ui_path: {path: ui, port: uiPort}, local_path: {path: server, port: localPort}
               }) // send this to electron
             }}
           >
@@ -194,6 +174,15 @@ function App() {
           >
             Will launch the ROS run.sh
           </Text>
+          <Text fontSize="sm" color="gray.400" rounded={8} px={2}>
+            Pose Tracking
+          </Text>
+          <Switch id="pullover" ml={2} 
+              onChange={e=>{
+                setIsPoseEnabled(e.target.checked)
+              }}
+              isChecked={isPoseEnabled}
+          />
         </Flex>
         <Divider my={3} />
         {createPanel(
@@ -230,23 +219,6 @@ function App() {
           }, () => {
             window.ipcRenderer.send('ui-server-stop', ui) // send this to electron
           })}
-        {createPanel(
-          'Pose Tracking',
-          (<InputGroup size="xs" w="90px" h="=4px"><InputLeftAddon children="port" bg="gray.900"  border="gray.900" w="40px" /><Input
-            placeholder="port"
-            value={posePort}
-            onChange={(e) => {
-              localStorage.setItem('posePort', e.target.value)
-              setPosePort(e.target.value)
-            }}
-          /></InputGroup>),
-          () => {
-            window.ipcRenderer.send('pose-server-restart', {path: pose, port: posePort}) // send this to electron
-          },
-          () => {
-            window.ipcRenderer.send('pose-server-stop', pose) // send this to electron
-          },
-        )}
         <Flex>
           <Text color="gray.400">Modify State</Text>
           <Spacer />

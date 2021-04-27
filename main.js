@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
+const url = require('url');
 const fs = require('fs')
 const io = require('socket.io-client')
 let socket
@@ -8,7 +9,7 @@ var exec = require('child_process').exec
 const { FaBullseye } = require('react-icons/fa')
 // const exec = require('child_process').exec
 let cartState
-let localServerStarted = false
+let browserWindow
 function createWindow() {
   // Create the browser window.
  var mainWindow = new BrowserWindow({
@@ -29,13 +30,8 @@ function createWindow() {
   // and load the index.html of the app.
   mainWindow.loadURL('http://localhost:3002')
 
-
-  fs.watchFile('../local-server/cart.json', (curr, prev) => {
-    console.log("WATCH CHANGE");
-    readFile('../local-server')
-    console.log('new state: ' + cartState.pullover)
-    mainWindow.webContents.send('state-change', cartState);
-  });
+  browserWindow = mainWindow
+  
   
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -61,13 +57,11 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-var child 
 ipcMain.on('start-all-servers', (ev, arg) => {
   console.log(arg)
-  run_sh_start({path: arg.ros_path})
+  run_sh_start(arg.ros)
   start_local_server(arg.local_path)
   start_ui_server(arg.ui_path)
-  start_pose_server(arg.pose_path)
 })
 
 ipcMain.on('local-server-restart', (ev, arg) => {
@@ -81,12 +75,6 @@ ipcMain.on('ui-server-restart', (ev, arg) => {
 })
 ipcMain.on('ui-server-stop', (ev, arg) => {
   stop_ui_server(arg)
-})
-ipcMain.on('pose-server-restart', (ev, arg) => {
-  start_pose_server(arg)
-})
-ipcMain.on('pose-server-stop', (ev, arg) => {
-  stop_pose_server(arg)  
 })
 ipcMain.on('pullover', (ev, arg) => {
   console.log('trigger pullover: ' + arg)
@@ -106,10 +94,18 @@ function start_local_server (arg) {
   })
   localServerStarted = true
   socket = io('http://localhost:8021/ui')
+  console.log('LOCAL SERVER STARTED')
+  startFileListener(arg.path)
 }
 function run_sh_start(arg) {
   console.log('Starting run.sh')
-  child = exec('./scripts/ros-start.sh \'' + arg.path + '\'', function (error, stdout, stderr) {
+  var flags = "";
+  if (arg.param) {
+    flags = "-p";
+  }
+  var cmd = './scripts/ros-start.sh \'' + arg.path + '\' \'' + flags+ '\''
+  console.log(cmd)
+  child = exec(cmd, function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
     console.log('Error: ' + error)
     console.log('Stderr: ' + stderr)
@@ -118,14 +114,6 @@ function run_sh_start(arg) {
 function start_ui_server(arg) {
   console.log('Starting UI Server.')
   child = exec('./scripts/ui-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-    console.log('Error: ' + error)
-    console.log('Stderr: ' + stderr)
-  })
-}
-function start_pose_server(arg) {
-  console.log('Starting Pose Server.')
-  child = exec('./scripts/pose-server-start.sh \'' + arg.path + '\' ' + arg.port, function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
     console.log('Error: ' + error)
     console.log('Stderr: ' + stderr)
@@ -140,12 +128,6 @@ function stop_local_server(arg) {
 function stop_ui_server(arg) {
   console.log('Stopping UI Server.')
   child = exec('./scripts/ui-server-stop.sh', function (error, stdout, stderr) {
-    console.log('Output: ' + stdout)
-  })
-}
-function stop_pose_server(arg) {
-  console.log('Stopping Pose Server')
-  child = exec('./scripts/pose-server-stop.sh', function (error, stdout, stderr) {
     console.log('Output: ' + stdout)
   })
 }
@@ -178,3 +160,12 @@ function writeFile(path) {
   fs.writeFileSync(path + '/cart.json', JSON.stringify(cartState))
 }
 
+function startFileListener(path) {
+  console.log('File Listener started on path: ' + path)
+  fs.watchFile(path + '/cart.json', (curr, prev) => {
+    console.log("WATCH CHANGE");
+    readFile(path)
+    console.log('new state: ' + cartState.pullover)
+    browserWindow.webContents.send('state-change', cartState);
+  });
+}
