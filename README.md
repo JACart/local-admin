@@ -1,3 +1,9 @@
+# Using the Admin Interface
+
+https://docs.google.com/document/d/1PsPGD2yNdt3wk8lwCoUZW7QrWryvvGq6P8Wk-w988J4/edit#
+
+Note: If the cart is flipped into manual mode from a human, to resume autonoumous driving, flip it back into autonomous mode, go into the local-admin screen, and toggle the "Pullover" switch.  It will then toggle ROS to resend the last command.
+
 # Deploying and using local-admin interface
 
 Clone Repository into catkin_ws/src directory
